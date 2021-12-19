@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>createElement function</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script type="text/babel">
+        function createElement(type, props, ...children) {
+            return {
+                type,
+                props: {
+                    ...props,
+                    children: children.map(child =>
+                        typeof child === 'object'
+                            ? child
+                            : createTextElement(child)
+                    )
+                }
+            }
+        }
+
+        function createTextElement(text) {
+            return {
+                type: "TEXT_ELEMENT",
+                props: {
+                    nodeValue: text,
+                    children: []
+                }
+            }
+        }
+
+        // render function
+        function render(element, container) {
+            // creating the DOM node and handle text elements
+            const dom =
+                element.type == "TEXT_ELEMENT"
+                    ? document.createTextNode("")
+                    : document.createElement(element.type)
+
+            // assign the element props to the node.
+            const isProperty = key => key !== "children"
+            Object.keys(element.props)
+                .filter(isProperty)
+                .forEach(name => {
+                    dom[name] = element.props[name]
+                })
+
+            // recursively do the same for each child
+            element.props.children.forEach(child =>
+                render(child, dom)
+            )
+
+            container.appendChild(dom)
+        }
+
+        let nextUnitOfWork = null
+
+        function workLoop(deadline) {
+            let shouldYield = false
+            while (nextUnitOfWork && !shouldYield) {
+                nextUnitOfWork = performUnitOfWork(
+                    nextUnitOfWork
+                )
+                shouldYield = deadline.timeRemaining() < 1
+            }
+            requestIdleCallback(workLoop)
+        }
+
+        requestIdleCallback(workLoop)
+
+        function performUnitOfWork(nextUnitOfWork) {
+            // TODO
+        }
+
+        const myReact = {
+            createElement,
+            render
+        }
+
+        const element = myReact.createElement(
+            "div",
+            { id: "foo" },
+            myReact.createElement("h1", null, "bar"),
+            myReact.createElement("h2", null, "baz"),
+        )
+        console.log(element)
+        const container = document.getElementById("container")
+        myReact.render(element, container)
+    </script>
+    <p>
+        element.props.children.forEach(child =>
+            render(child, dom)
+        )
+    </p>
+    <p>
+        这个递归调用是有问题的，一旦开始渲染，就会将所有节点及其子节点全部渲染完成这个进程才会结束。当dom tree很大的情况下，在渲染过程中，页面上是卡住的状态，无法进行用户输入等交互操作。
+    </p>
+    <p>可分为以下步骤解决上述问题：</p>
+    <p>1.允许中断渲染工作，如果有优先级更高的工作插入，则暂时中断浏览器渲染，待完成该工作后，恢复浏览器渲染；</p>
+    <p>2.将渲染工作进行分解，分解成一个个小单元；</p>
+    <p>3.使用 requestIdleCallback 来解决允许中断渲染工作的问题。</p>
+    <p>window.requestIdleCallback将在浏览器的空闲时段内调用的函数排队。这使开发者能够在主事件循环上执行后台和低优先级工作，而不会影响延迟关键事件，如动画和输入响应。</p>
+</body>
+
+</html>

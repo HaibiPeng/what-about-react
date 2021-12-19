@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>render function</title>
+        <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script type="text/babel">
+        function createElement(type, props, ...children) {
+            return {
+                type,
+                props: {
+                    ...props,
+                    children: children.map(child =>
+                        typeof child === 'object'
+                            ? child
+                            : createTextElement(child)
+                    )
+                }
+            }
+        }
+
+        function createTextElement(text) {
+            return {
+                type: "TEXT_ELEMENT",
+                props: {
+                    nodeValue: text,
+                    children: []
+                }
+            }
+        }
+
+        // render function
+        function render(element, container) {
+            // creating the DOM node and handle text elements
+            const dom =
+                element.type == "TEXT_ELEMENT"
+                    ? document.createTextNode("")
+                    : document.createElement(element.type)
+
+            // assign the element props to the node.
+            const isProperty = key => key !== "children"
+            Object.keys(element.props)
+                .filter(isProperty)
+                .forEach(name => {
+                    dom[name] = element.props[name]
+                })
+
+            // recursively do the same for each child
+            element.props.children.forEach(child =>
+                render(child, dom)
+            )
+
+            container.appendChild(dom)
+        }
+
+        const myReact = {
+            createElement,
+            render
+        }
+
+        const element = myReact.createElement(
+            "div",
+            { id: "foo" },
+            myReact.createElement("h1", null, "bar"),
+            myReact.createElement("h2", null, "baz"),
+        )
+        console.log(element)
+        const container = document.getElementById("container")
+        myReact.render(element, container)
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>createElement function</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script type="text/babel">
+        // what React does
+        // const element = React.createElement(
+        //         "div",
+        //         { id: "foo" },
+        //         React.createElement("a", null, "bar"),
+        //         React.createElement("b")
+        //     )
+        // const container = document.getElementById("root")
+        // ReactDOM.render(element, container)
+
+        // createElement function
+        function createElement(type, props, ...children) {
+            return {
+                type,
+                props: {
+                    ...props,
+                    children: children.map(child =>
+                        typeof child === 'object'
+                            ? child
+                            : createTextElement(child)
+                    )
+                }
+            }
+        }
+
+        function createTextElement(text) {
+            return {
+                type: "TEXT_ELEMENT",
+                props: {
+                    nodeValue: text,
+                    children: []
+                }
+            }
+        }
+        const myReact = {
+            createElement
+        }
+        const element = myReact.createElement(
+            "div",
+            { id: "foo" },
+            myReact.createElement("a", null, "bar"),
+            myReact.createElement("b")
+        )
+        console.log(element)
+    </script>
+</body>
+
+</html>

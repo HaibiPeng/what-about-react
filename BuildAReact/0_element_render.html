@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script type="text/babel">
+        // what React does
+        // either in JSX or creatElement
+        // const element = <h1 title="foo">hello world</h1>
+        // const element = React.createElement(
+        //         "h1",
+        //         { title: "foo" },
+        //         "Hello world"
+        //     )
+        // console.log(element)
+        // const container = document.getElementById('container')
+        // ReactDOM.render(element, container);
+
+        // own version
+        // element as object
+        const element = {
+            type: 'h1',
+            props: {
+                title: 'foo',
+                children: 'hello world'
+            }
+        }
+        const container = document.getElementById("container")
+        // create DOM node
+        const node = document.createElement(element.type)
+        node["title"] = element.props.title
+        // create nodes for the children
+        const text = document.createTextNode("")
+        text["nodeValue"] = element.props.children
+        // append the textNode to the h1 and the h1 to the container
+        node.appendChild(text)
+        container.appendChild(node)
+    </script>
+    <p>JSX is transformed to JS by build tools like Babel. The transformation is usually simple: replace the code inside the
+    tags with a call to createElement, passing the tag name, the props and the children as parameters.</p>
+</body>
+
+</html>
