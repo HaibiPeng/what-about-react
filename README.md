@@ -23,4 +23,15 @@ Starting from scratch, these are all the things that are add to a simple version
 2. Modify diff algorithm
 3. Add or modify more features, e.g., from https://github.com/chinanf-boy/didact-explain
 
+## Build A Redux
+
+Starting from scratch, these are all the things that are add to a simple version of Redux one by one:
+
+* Step I: The createStore Function
+* Step II: The combineReducers Function
+* Step III: Connect Function
+* Step IV: Provider Function
+
+And based on that, a simple Counter App is buil to test the functionalities of this redux.
+
 ## More to come...
