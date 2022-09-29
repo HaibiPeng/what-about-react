@@ -18,9 +18,9 @@
         //         { id: "foo" },
         //         React.createElement("a", null, "bar"),
         //         React.createElement("b")
-        //     )
-        // const container = document.getElementById("root")
-        // ReactDOM.render(element, container)
+        //     );
+        // const container = document.getElementById("root");
+        // ReactDOM.render(element, container);
 
         // createElement function
         function createElement(type, props, ...children) {
@@ -31,31 +31,31 @@
                     children: children.map(child =>
                         typeof child === 'object'
                             ? child
-                            : createTextElement(child)
+                            : createPrimitiveElement(child)
                     )
                 }
-            }
+            };
         }
 
-        function createTextElement(text) {
+        function createPrimitiveElement(text) {
             return {
-                type: "TEXT_ELEMENT",
+                type: "PRIMITIVE_ELEMENT",
                 props: {
                     nodeValue: text,
                     children: []
                 }
-            }
+            };
         }
         const myReact = {
             createElement
-        }
+        };
         const element = myReact.createElement(
             "div",
             { id: "foo" },
             myReact.createElement("a", null, "bar"),
             myReact.createElement("b")
-        )
-        console.log(element)
+        );
+        console.log(element);
     </script>
 </body>
 

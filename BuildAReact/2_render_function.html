@@ -20,60 +20,61 @@
                     children: children.map(child =>
                         typeof child === 'object'
                             ? child
-                            : createTextElement(child)
+                            : createPrimitiveElement(child)
                     )
                 }
-            }
+            };
         }
 
-        function createTextElement(text) {
+        function createPrimitiveElement(text) {
             return {
-                type: "TEXT_ELEMENT",
+                type: "PRIMITIVE_ELEMENT",
                 props: {
                     nodeValue: text,
                     children: []
                 }
-            }
+            };
         }
 
         // render function
         function render(element, container) {
-            // creating the DOM node and handle text elements
+            // 创建DOM节点并处理基本数据类型
             const dom =
-                element.type == "TEXT_ELEMENT"
+                element.type == "PRIMITIVE_ELEMENT"
                     ? document.createTextNode("")
-                    : document.createElement(element.type)
+                    : document.createElement(element.type);
 
-            // assign the element props to the node.
-            const isProperty = key => key !== "children"
+            // 分配元素props给DOM节点
+            const isProperty = key => key !== "children";
             Object.keys(element.props)
                 .filter(isProperty)
                 .forEach(name => {
                     dom[name] = element.props[name]
-                })
+                });
 
-            // recursively do the same for each child
+            // 对于每个children递归执行render函数
             element.props.children.forEach(child =>
                 render(child, dom)
-            )
-
-            container.appendChild(dom)
+            );
+            
+            // 最后把节点添加到对应的DOM节点 
+            container.appendChild(dom);
         }
 
         const myReact = {
             createElement,
             render
-        }
+        };
 
         const element = myReact.createElement(
             "div",
             { id: "foo" },
             myReact.createElement("h1", null, "bar"),
             myReact.createElement("h2", null, "baz"),
-        )
-        console.log(element)
-        const container = document.getElementById("container")
-        myReact.render(element, container)
+        );
+        console.log(element);
+        const container = document.getElementById("container");
+        myReact.render(element, container);
     </script>
 </body>
 
