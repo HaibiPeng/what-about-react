@@ -1,12 +1,11 @@
-// The combineReducers helper function turns an object whose values are 
-// different reducing functions into a single reducing function that can be passed to createStore
+// combineReducers函数将一个含有不同reducers的对象转化为一个单独的reducer，这个合成的reducer将作为参数传递给createStore函数
 const combineReducers = (reducers) => {
-    // the return value is also reducer, so it's a function that returns other function
+    // 函数返回值也是一个reducer，所以它也是一个返回函数的函数
     return (state = {}, action) => {
         return Object.keys(reducers).reduce((nextState, key) => {
             nextState[key] = reducers[key](state[key], action);
             return nextState;
-        }, {}); // start reduce with an empty object
+        }, {}); // reduce方法，从一个空对象开始reduce
     };
 };
 
